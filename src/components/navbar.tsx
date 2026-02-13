@@ -25,6 +25,7 @@ import {
     Palette,
     Upload,
     Globe,
+    Shield,
 } from 'lucide-react';
 
 const navLinks = [
@@ -124,6 +125,14 @@ export function Navbar() {
                                     Social Accounts
                                 </Link>
                             </DropdownMenuItem>
+                            {(profile?.role === 'admin' || profile?.role === 'coordinator') && (
+                                <DropdownMenuItem asChild>
+                                    <Link href="/admin" className="flex items-center gap-2">
+                                        <Shield className="h-4 w-4" />
+                                        Admin Panel
+                                    </Link>
+                                </DropdownMenuItem>
+                            )}
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={signOut} className="text-destructive focus:text-destructive">
                                 <LogOut className="h-4 w-4 mr-2" />
