@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/lib/auth-context';
+import { useTranslation } from '@/lib/i18n';
 import Link from 'next/link';
 import {
     LayoutDashboard,
@@ -19,22 +20,23 @@ import {
     Clock,
 } from 'lucide-react';
 
-const quickActions = [
-    { href: '/templates', icon: Palette, label: 'Browse Templates', color: 'bg-blue-500/10 text-blue-600' },
-    { href: '/media', icon: Image, label: 'Upload Photo', color: 'bg-green-500/10 text-green-600' },
-    { href: '/posts', icon: Send, label: 'View Posts', color: 'bg-purple-500/10 text-purple-600' },
-    { href: '/profile', icon: FileText, label: 'Edit Profile', color: 'bg-orange-500/10 text-orange-600' },
-];
-
-const recentTemplates = [
-    { id: 1, name: 'Pongal Wishes 2026', category: 'Festival', color: 'bg-yellow-500' },
-    { id: 2, name: 'Party Meeting Poster', category: 'Event', color: 'bg-blue-500' },
-    { id: 3, name: 'Birthday Greeting', category: 'Birthday', color: 'bg-pink-500' },
-    { id: 4, name: 'Campaign Banner', category: 'Campaign', color: 'bg-red-500' },
-];
-
 export default function DashboardPage() {
     const { profile } = useAuth();
+    const { t } = useTranslation();
+
+    const quickActions = [
+        { href: '/templates', icon: Palette, label: t('dashboard.browse_templates'), color: 'bg-blue-500/10 text-blue-600' },
+        { href: '/media', icon: Image, label: t('dashboard.upload_photo'), color: 'bg-green-500/10 text-green-600' },
+        { href: '/posts', icon: Send, label: t('dashboard.view_posts'), color: 'bg-purple-500/10 text-purple-600' },
+        { href: '/profile', icon: FileText, label: t('dashboard.edit_profile'), color: 'bg-orange-500/10 text-orange-600' },
+    ];
+
+    const recentTemplates = [
+        { id: 1, name: 'Pongal Wishes 2026', category: t('templates.festival'), color: 'bg-yellow-500' },
+        { id: 2, name: 'Party Meeting Poster', category: t('templates.event'), color: 'bg-blue-500' },
+        { id: 3, name: 'Birthday Greeting', category: t('templates.birthday'), color: 'bg-pink-500' },
+        { id: 4, name: 'Campaign Banner', category: t('templates.campaign'), color: 'bg-red-500' },
+    ];
 
     return (
         <div className="space-y-8">
@@ -45,16 +47,16 @@ export default function DashboardPage() {
                     <div className="flex items-start justify-between">
                         <div>
                             <h1 className="text-3xl font-bold mb-2">
-                                வணக்கம், {profile?.name || 'Member'} 👋
+                                {t('dashboard.welcome', { name: profile?.name || 'Member' })}
                             </h1>
                             <p className="text-white/70 max-w-md">
-                                Welcome to VCK Social Media Manager. Create and publish professional posts to grow your social media presence.
+                                {t('dashboard.welcome_subtitle')}
                             </p>
                         </div>
                         <Link href="/templates">
                             <Button className="bg-white/15 hover:bg-white/25 border border-white/20 backdrop-blur-sm text-white">
                                 <Plus className="mr-2 h-4 w-4" />
-                                Create Post
+                                {t('nav.create_post')}
                             </Button>
                         </Link>
                     </div>
@@ -64,10 +66,10 @@ export default function DashboardPage() {
             {/* Stats Grid */}
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {[
-                    { title: 'Total Posts', value: '0', change: 'Get started!', icon: Send, color: 'text-blue-500' },
-                    { title: 'Published', value: '0', change: 'This month', icon: TrendingUp, color: 'text-green-500' },
-                    { title: 'Scheduled', value: '0', change: 'Upcoming', icon: Calendar, color: 'text-purple-500' },
-                    { title: 'Media Files', value: '0', change: 'Photos uploaded', icon: Image, color: 'text-orange-500' },
+                    { title: t('dashboard.total_posts'), value: '0', change: t('dashboard.get_started'), icon: Send, color: 'text-blue-500' },
+                    { title: t('dashboard.published'), value: '0', change: t('dashboard.this_month'), icon: TrendingUp, color: 'text-green-500' },
+                    { title: t('dashboard.scheduled'), value: '0', change: t('dashboard.upcoming'), icon: Calendar, color: 'text-purple-500' },
+                    { title: t('dashboard.media_files'), value: '0', change: t('dashboard.photos_uploaded'), icon: Image, color: 'text-orange-500' },
                 ].map((stat) => (
                     <Card key={stat.title} className="border-border/50 hover:shadow-lg transition-shadow">
                         <CardContent className="p-6">
@@ -89,7 +91,7 @@ export default function DashboardPage() {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-lg">
                             <LayoutDashboard className="h-5 w-5 text-primary" />
-                            Quick Actions
+                            {t('dashboard.quick_actions')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -115,10 +117,10 @@ export default function DashboardPage() {
                     <CardHeader className="flex flex-row items-center justify-between">
                         <CardTitle className="flex items-center gap-2 text-lg">
                             <Palette className="h-5 w-5 text-primary" />
-                            Popular Templates
+                            {t('dashboard.popular_templates')}
                         </CardTitle>
                         <Link href="/templates" className="text-sm text-primary hover:underline flex items-center gap-1">
-                            View All <ArrowRight className="h-3 w-3" />
+                            {t('common.view_all')} <ArrowRight className="h-3 w-3" />
                         </Link>
                     </CardHeader>
                     <CardContent>
@@ -147,7 +149,7 @@ export default function DashboardPage() {
                 <CardHeader>
                     <CardTitle className="flex items-center gap-2 text-lg">
                         <Users className="h-5 w-5 text-primary" />
-                        Connected Accounts
+                        {t('dashboard.connected_accounts')}
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -160,10 +162,10 @@ export default function DashboardPage() {
                             </div>
                             <div className="flex-1">
                                 <p className="text-sm font-medium">Facebook</p>
-                                <p className="text-xs text-muted-foreground">Not connected</p>
+                                <p className="text-xs text-muted-foreground">{t('common.not_connected')}</p>
                             </div>
                             <Badge variant="secondary" className="text-xs">
-                                <Clock className="h-3 w-3 mr-1" /> Setup
+                                <Clock className="h-3 w-3 mr-1" />{t('common.setup')}
                             </Badge>
                         </div>
                         <div className="flex items-center gap-4 p-4 rounded-xl border border-border/50">
@@ -174,10 +176,10 @@ export default function DashboardPage() {
                             </div>
                             <div className="flex-1">
                                 <p className="text-sm font-medium">Instagram</p>
-                                <p className="text-xs text-muted-foreground">Not connected</p>
+                                <p className="text-xs text-muted-foreground">{t('common.not_connected')}</p>
                             </div>
                             <Badge variant="secondary" className="text-xs">
-                                <Clock className="h-3 w-3 mr-1" /> Setup
+                                <Clock className="h-3 w-3 mr-1" />{t('common.setup')}
                             </Badge>
                         </div>
                     </div>

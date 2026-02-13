@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { useAuth } from '@/lib/auth-context';
+import { useTranslation } from '@/lib/i18n';
 import { PLANS, buildCheckoutOptions, SubscriptionPlan } from '@/lib/razorpay';
 import {
     Crown, Check, Star, Zap, Shield, CreditCard,
@@ -31,6 +32,7 @@ interface PaymentRecord {
 
 export default function SubscriptionPage() {
     const { profile } = useAuth();
+    const { t } = useTranslation();
     const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly');
     const [loading, setLoading] = useState<string | null>(null);
     const [activePlan, setActivePlan] = useState<string | null>(null);
@@ -193,10 +195,10 @@ export default function SubscriptionPage() {
                     <Sparkles className="h-5 w-5 text-yellow-500" />
                 </div>
                 <h1 className="text-3xl font-bold bg-gradient-to-r from-[#1a237e] to-[#c62828] bg-clip-text text-transparent">
-                    Choose Your Plan
+                    {t('subscription.title')}
                 </h1>
                 <p className="text-muted-foreground mt-2">
-                    Power up your social media presence with VCK-branded templates and direct publishing
+                    {t('subscription.subtitle')}
                 </p>
             </div>
 
@@ -205,8 +207,8 @@ export default function SubscriptionPage() {
                 <button
                     onClick={() => setBillingCycle('monthly')}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${billingCycle === 'monthly'
-                            ? 'bg-primary text-primary-foreground shadow-md'
-                            : 'text-muted-foreground hover:text-foreground'
+                        ? 'bg-primary text-primary-foreground shadow-md'
+                        : 'text-muted-foreground hover:text-foreground'
                         }`}
                 >
                     Monthly
@@ -214,11 +216,11 @@ export default function SubscriptionPage() {
                 <button
                     onClick={() => setBillingCycle('yearly')}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${billingCycle === 'yearly'
-                            ? 'bg-primary text-primary-foreground shadow-md'
-                            : 'text-muted-foreground hover:text-foreground'
+                        ? 'bg-primary text-primary-foreground shadow-md'
+                        : 'text-muted-foreground hover:text-foreground'
                         }`}
                 >
-                    Yearly
+                    {t('subscription.yearly')}
                     <Badge className="bg-green-500/20 text-green-600 border-green-500/30 text-[10px]">
                         Save 33%
                     </Badge>
@@ -255,10 +257,10 @@ export default function SubscriptionPage() {
                         <Card
                             key={plan.id}
                             className={`relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${isPopular
-                                    ? 'border-2 border-primary shadow-lg ring-1 ring-primary/10'
-                                    : isActive
-                                        ? 'border-2 border-green-500/50'
-                                        : 'border-border/50 hover:border-primary/30'
+                                ? 'border-2 border-primary shadow-lg ring-1 ring-primary/10'
+                                : isActive
+                                    ? 'border-2 border-green-500/50'
+                                    : 'border-border/50 hover:border-primary/30'
                                 }`}
                         >
                             {isPopular && (
@@ -307,10 +309,10 @@ export default function SubscriptionPage() {
                                 {/* CTA */}
                                 <Button
                                     className={`w-full transition-all ${isActive
-                                            ? 'bg-green-500 hover:bg-green-600'
-                                            : isPopular
-                                                ? ''
-                                                : 'variant-outline'
+                                        ? 'bg-green-500 hover:bg-green-600'
+                                        : isPopular
+                                            ? ''
+                                            : 'variant-outline'
                                         }`}
                                     variant={isActive ? 'default' : isPopular ? 'default' : 'outline'}
                                     onClick={() => !isActive && handleSubscribe(plan)}
@@ -323,7 +325,7 @@ export default function SubscriptionPage() {
                                     ) : (
                                         <CreditCard className="h-4 w-4 mr-2" />
                                     )}
-                                    {isActive ? 'Current Plan' : loading === plan.id ? 'Processing...' : 'Subscribe'}
+                                    {isActive ? t('subscription.current_plan') : loading === plan.id ? t('common.loading') : t('subscription.subscribe_now')}
                                 </Button>
                             </CardContent>
                         </Card>
@@ -337,7 +339,7 @@ export default function SubscriptionPage() {
                     <CardHeader>
                         <CardTitle className="text-base flex items-center gap-2">
                             <Receipt className="h-4 w-4 text-primary" />
-                            Payment History
+                            {t('subscription.payment_history')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -366,8 +368,8 @@ export default function SubscriptionPage() {
                                         <p className="text-sm font-semibold">{payment.amount}</p>
                                         <Badge
                                             className={`text-[10px] ${payment.status === 'success'
-                                                    ? 'bg-green-500/10 text-green-600'
-                                                    : 'bg-red-500/10 text-red-600'
+                                                ? 'bg-green-500/10 text-green-600'
+                                                : 'bg-red-500/10 text-red-600'
                                                 }`}
                                         >
                                             {payment.status}
@@ -382,7 +384,7 @@ export default function SubscriptionPage() {
 
             {/* FAQ */}
             <div className="max-w-2xl mx-auto space-y-3">
-                <h2 className="text-xl font-bold text-center mb-4">Frequently Asked Questions</h2>
+                <h2 className="text-xl font-bold text-center mb-4">{t('subscription.faq_title')}</h2>
                 {faqs.map((faq) => (
                     <Card
                         key={faq.q}

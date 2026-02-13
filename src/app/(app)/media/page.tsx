@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
+import { useTranslation } from '@/lib/i18n';
 import {
     Upload,
     Image,
@@ -30,6 +31,7 @@ export default function MediaPage() {
     const [dragActive, setDragActive] = useState(false);
     const [previewFile, setPreviewFile] = useState<MediaFile | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const { t } = useTranslation();
 
     const handleFiles = useCallback((fileList: FileList) => {
         const newFiles: MediaFile[] = [];
@@ -95,23 +97,23 @@ export default function MediaPage() {
                 <div>
                     <h1 className="text-2xl font-bold flex items-center gap-2">
                         <Image className="h-6 w-6 text-primary" />
-                        My Media
+                        {t('media.title')}
                     </h1>
                     <p className="text-muted-foreground mt-1">
-                        Upload your photos to use in social media templates.
+                        {t('media.subtitle')}
                     </p>
                 </div>
                 <Button onClick={() => fileInputRef.current?.click()}>
                     <Plus className="mr-2 h-4 w-4" />
-                    Upload
+                    {t('media.upload')}
                 </Button>
             </div>
 
             {/* Upload Zone */}
             <Card
                 className={`border-2 border-dashed transition-all cursor-pointer ${dragActive
-                        ? 'border-primary bg-primary/5 shadow-lg'
-                        : 'border-border/50 hover:border-primary/30'
+                    ? 'border-primary bg-primary/5 shadow-lg'
+                    : 'border-border/50 hover:border-primary/30'
                     }`}
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
@@ -201,8 +203,8 @@ export default function MediaPage() {
             {files.length === 0 && (
                 <div className="text-center py-12">
                     <Image className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-muted-foreground mb-1">No photos yet</h3>
-                    <p className="text-sm text-muted-foreground/70">Upload your first photo to get started with templates</p>
+                    <h3 className="text-lg font-semibold text-muted-foreground mb-1">{t('media.no_media')}</h3>
+                    <p className="text-sm text-muted-foreground/70">{t('media.no_media_hint')}</p>
                 </div>
             )}
 

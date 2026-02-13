@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { getMetaOAuthURL } from '@/lib/meta-api';
+import { useTranslation } from '@/lib/i18n';
 import {
     Link2, Unlink, Facebook, Instagram, Shield,
     CheckCircle, XCircle, RefreshCw, ExternalLink, Globe,
@@ -40,6 +41,7 @@ export default function SocialAccountsPage() {
 
 function SocialAccountsContent() {
     const searchParams = useSearchParams();
+    const { t } = useTranslation();
     const [connection, setConnection] = useState<ConnectionData | null>(null);
     const [connecting, setConnecting] = useState(false);
 
@@ -104,10 +106,10 @@ function SocialAccountsContent() {
             <div>
                 <h1 className="text-2xl font-bold flex items-center gap-2">
                     <Globe className="h-6 w-6 text-primary" />
-                    Social Accounts
+                    {t('social.title')}
                 </h1>
                 <p className="text-muted-foreground mt-1">
-                    Connect your Facebook and Instagram accounts to publish posts directly.
+                    {t('social.subtitle')}
                 </p>
             </div>
 
@@ -138,12 +140,12 @@ function SocialAccountsContent() {
                             {isConnected ? (
                                 <Button variant="destructive" size="sm" onClick={handleDisconnect}>
                                     <Unlink className="h-4 w-4 mr-1.5" />
-                                    Disconnect
+                                    {t('social.disconnect')}
                                 </Button>
                             ) : (
                                 <Button onClick={handleConnect} disabled={connecting}>
                                     <Link2 className="h-4 w-4 mr-1.5" />
-                                    {connecting ? 'Connecting...' : 'Connect with Meta'}
+                                    {connecting ? t('common.loading') : t('social.connect_meta')}
                                 </Button>
                             )}
                         </div>

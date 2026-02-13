@@ -7,34 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { TEMPLATES } from '@/lib/templates-data';
+import { useTranslation } from '@/lib/i18n';
 import {
     Palette, Search, Star, Sparkles, PartyPopper, Cake,
     Megaphone, Calendar, Trophy, Heart, Newspaper,
     LayoutGrid, ArrowRight, Eye,
 } from 'lucide-react';
-
-const categories = [
-    { id: 'all', label: 'All', icon: LayoutGrid },
-    { id: 'festival', label: 'Festival', icon: PartyPopper },
-    { id: 'birthday', label: 'Birthday', icon: Cake },
-    { id: 'campaign', label: 'Campaign', icon: Megaphone },
-    { id: 'event', label: 'Event', icon: Calendar },
-    { id: 'achievement', label: 'Achievement', icon: Trophy },
-    { id: 'condolence', label: 'Condolence', icon: Heart },
-    { id: 'announcement', label: 'News', icon: Newspaper },
-    { id: 'general', label: 'General', icon: Sparkles },
-];
-
-const categoryColors: Record<string, [string, string]> = {
-    festival: ['#f9a825', '#ff8f00'],
-    birthday: ['#e91e63', '#880e4f'],
-    campaign: ['#1a237e', '#c62828'],
-    event: ['#1a237e', '#0d47a1'],
-    achievement: ['#0d47a1', '#004d40'],
-    condolence: ['#1a1a2e', '#16213e'],
-    announcement: ['#1a237e', '#c62828'],
-    general: ['#1a237e', '#283593'],
-};
 
 // Mini canvas thumbnail renderer
 function TemplateThumb({ template }: { template: typeof TEMPLATES[0] }) {
@@ -79,8 +57,32 @@ function TemplateThumb({ template }: { template: typeof TEMPLATES[0] }) {
 
 export default function TemplatesPage() {
     const router = useRouter();
+    const { t } = useTranslation();
     const [search, setSearch] = useState('');
     const [activeCategory, setActiveCategory] = useState('all');
+
+    const categories = [
+        { id: 'all', label: t('common.all'), icon: LayoutGrid },
+        { id: 'festival', label: t('templates.festival'), icon: PartyPopper },
+        { id: 'birthday', label: t('templates.birthday'), icon: Cake },
+        { id: 'campaign', label: t('templates.campaign'), icon: Megaphone },
+        { id: 'event', label: t('templates.event'), icon: Calendar },
+        { id: 'achievement', label: t('templates.achievement'), icon: Trophy },
+        { id: 'condolence', label: t('templates.condolence'), icon: Heart },
+        { id: 'announcement', label: t('templates.announcement'), icon: Newspaper },
+        { id: 'general', label: t('templates.general'), icon: Sparkles },
+    ];
+
+    const categoryColors: Record<string, [string, string]> = {
+        festival: ['#f9a825', '#ff8f00'],
+        birthday: ['#e91e63', '#880e4f'],
+        campaign: ['#1a237e', '#c62828'],
+        event: ['#1a237e', '#0d47a1'],
+        achievement: ['#0d47a1', '#004d40'],
+        condolence: ['#1a1a2e', '#16213e'],
+        announcement: ['#1a237e', '#c62828'],
+        general: ['#1a237e', '#283593'],
+    };
 
     const filtered = TEMPLATES.filter((t) => {
         const matchesSearch = t.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -94,10 +96,10 @@ export default function TemplatesPage() {
             <div>
                 <h1 className="text-2xl font-bold flex items-center gap-2">
                     <Palette className="h-6 w-6 text-primary" />
-                    Template Gallery
+                    {t('templates.title')}
                 </h1>
                 <p className="text-muted-foreground mt-1">
-                    Choose a party-branded template and customize it with your details.
+                    {t('templates.subtitle')}
                 </p>
             </div>
 
@@ -105,7 +107,7 @@ export default function TemplatesPage() {
             <div className="relative max-w-md">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                    placeholder="Search templates..."
+                    placeholder={t('templates.search_placeholder')}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="pl-9"
@@ -144,7 +146,7 @@ export default function TemplatesPage() {
                                 <div className="flex gap-2">
                                     <Button size="sm" className="shadow-xl">
                                         <Palette className="h-4 w-4 mr-1" />
-                                        Customize
+                                        {t('templates.customize')}
                                         <ArrowRight className="h-4 w-4 ml-1" />
                                     </Button>
                                 </div>
@@ -154,7 +156,7 @@ export default function TemplatesPage() {
                             <div className="absolute top-3 left-3 flex gap-1.5">
                                 {template.is_premium && (
                                     <Badge className="bg-yellow-500 hover:bg-yellow-600 text-black text-xs shadow-lg">
-                                        <Star className="h-3 w-3 mr-1" /> Premium
+                                        <Star className="h-3 w-3 mr-1" /> {t('common.premium')}
                                     </Badge>
                                 )}
                             </div>
@@ -180,8 +182,8 @@ export default function TemplatesPage() {
             {filtered.length === 0 && (
                 <div className="text-center py-16">
                     <Palette className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-muted-foreground">No templates found</h3>
-                    <p className="text-sm text-muted-foreground/70">Try a different search or category</p>
+                    <h3 className="text-lg font-semibold text-muted-foreground">{t('templates.no_templates')}</h3>
+                    <p className="text-sm text-muted-foreground/70">{t('templates.no_templates_hint')}</p>
                 </div>
             )}
         </div>

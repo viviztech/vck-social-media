@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { useAuth } from '@/lib/auth-context';
+import { useTranslation, LANGUAGES, Language } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,6 +22,7 @@ import {
     Phone,
     Mail,
     Shield,
+    Languages,
 } from 'lucide-react';
 
 const DISTRICTS = [
@@ -43,6 +45,7 @@ const PARTY_ROLES = [
 
 export default function ProfilePage() {
     const { profile, updateProfile, user } = useAuth();
+    const { t, language, setLanguage } = useTranslation();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [loading, setLoading] = useState(false);
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -89,7 +92,7 @@ export default function ProfilePage() {
         if (error) {
             toast.error(error);
         } else {
-            toast.success('Profile updated successfully!');
+            toast.success(t('profile.saved'));
         }
     };
 
@@ -98,10 +101,10 @@ export default function ProfilePage() {
             <div>
                 <h1 className="text-2xl font-bold flex items-center gap-2">
                     <User className="h-6 w-6 text-primary" />
-                    My Profile
+                    {t('profile.title')}
                 </h1>
                 <p className="text-muted-foreground mt-1">
-                    Your details will auto-fill into every template you create.
+                    {t('profile.subtitle')}
                 </p>
             </div>
 
@@ -153,16 +156,42 @@ export default function ProfilePage() {
                 </CardContent>
             </Card>
 
+            {/* Language Preference */}
+            <Card className="border-border/50">
+                <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                        <Languages className="h-5 w-5 text-primary" />
+                        {t('profile.language_preference')}
+                    </CardTitle>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex gap-3">
+                        {(Object.entries(LANGUAGES) as [Language, string][]).map(([code, label]) => (
+                            <Button
+                                key={code}
+                                variant={language === code ? 'default' : 'outline'}
+                                size="lg"
+                                onClick={() => setLanguage(code)}
+                                className="flex-1"
+                            >
+                                <span className="text-lg mr-2">{code === 'ta' ? '🇮🇳' : '🇬🇧'}</span>
+                                {label}
+                            </Button>
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
+
             {/* Personal Details */}
             <Card className="border-border/50">
                 <CardHeader>
-                    <CardTitle className="text-lg">Personal Details</CardTitle>
-                    <CardDescription>This information appears on your social media templates.</CardDescription>
+                    <CardTitle className="text-lg">{t('profile.personal_info')}</CardTitle>
+                    <CardDescription>{t('profile.subtitle')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
-                            <Label htmlFor="prof-name">Full Name</Label>
+                            <Label htmlFor="prof-name">{t('profile.name')}</Label>
                             <Input
                                 id="prof-name"
                                 value={name}
@@ -171,7 +200,7 @@ export default function ProfilePage() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="prof-phone">Phone Number</Label>
+                            <Label htmlFor="prof-phone">{t('profile.phone')}</Label>
                             <Input
                                 id="prof-phone"
                                 type="tel"
@@ -182,7 +211,7 @@ export default function ProfilePage() {
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="prof-designation">Designation / Title</Label>
+                        <Label htmlFor="prof-designation">{t('profile.designation')}</Label>
                         <Input
                             id="prof-designation"
                             value={designation}
@@ -198,13 +227,13 @@ export default function ProfilePage() {
                 <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                         <MapPin className="h-5 w-5 text-primary" />
-                        Party & Constituency
+                        {t('profile.constituency')} & {t('profile.party_role')}
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="grid gap-4 sm:grid-cols-2">
                         <div className="space-y-2">
-                            <Label htmlFor="prof-constituency">Constituency</Label>
+                            <Label htmlFor="prof-constituency">{t('profile.constituency')}</Label>
                             <Input
                                 id="prof-constituency"
                                 value={constituency}
@@ -213,7 +242,7 @@ export default function ProfilePage() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="prof-district">District</Label>
+                            <Label htmlFor="prof-district">{t('profile.district')}</Label>
                             <Select value={district} onValueChange={setDistrict}>
                                 <SelectTrigger>
                                     <SelectValue placeholder="Select district" />
@@ -227,7 +256,7 @@ export default function ProfilePage() {
                         </div>
                     </div>
                     <div className="space-y-2">
-                        <Label htmlFor="prof-role">Party Role</Label>
+                        <Label htmlFor="prof-role">{t('profile.party_role')}</Label>
                         <Select value={partyRole} onValueChange={setPartyRole}>
                             <SelectTrigger>
                                 <SelectValue placeholder="Select role" />
@@ -249,12 +278,12 @@ export default function ProfilePage() {
                     {loading ? (
                         <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Saving...
+                            {t('profile.saving')}
                         </>
                     ) : (
                         <>
                             <Save className="mr-2 h-4 w-4" />
-                            Save Profile
+                            {t('profile.save_changes')}
                         </>
                     )}
                 </Button>

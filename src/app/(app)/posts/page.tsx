@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslation } from '@/lib/i18n';
 import {
     Send, Clock, CheckCircle, XCircle, ExternalLink,
     Image as ImageIcon, MoreVertical, FileText,
@@ -12,6 +13,7 @@ import { useState } from 'react';
 
 export default function PostsPage() {
     const [activeTab, setActiveTab] = useState('all');
+    const { t } = useTranslation();
 
     return (
         <div className="space-y-6">
@@ -19,21 +21,21 @@ export default function PostsPage() {
                 <div>
                     <h1 className="text-2xl font-bold flex items-center gap-2">
                         <Send className="h-6 w-6 text-primary" />
-                        My Posts
+                        {t('posts.title')}
                     </h1>
-                    <p className="text-muted-foreground mt-1">Track all your social media posts.</p>
+                    <p className="text-muted-foreground mt-1">{t('posts.subtitle')}</p>
                 </div>
                 <Button asChild>
-                    <a href="/templates"><ImageIcon className="mr-2 h-4 w-4" />Create Post</a>
+                    <a href="/templates"><ImageIcon className="mr-2 h-4 w-4" />{t('nav.create_post')}</a>
                 </Button>
             </div>
 
             <Tabs value={activeTab} onValueChange={setActiveTab}>
                 <TabsList>
-                    <TabsTrigger value="all">All Posts</TabsTrigger>
-                    <TabsTrigger value="published">Published</TabsTrigger>
-                    <TabsTrigger value="scheduled">Scheduled</TabsTrigger>
-                    <TabsTrigger value="draft">Drafts</TabsTrigger>
+                    <TabsTrigger value="all">{t('posts.all_posts')}</TabsTrigger>
+                    <TabsTrigger value="published">{t('posts.published')}</TabsTrigger>
+                    <TabsTrigger value="scheduled">{t('posts.scheduled')}</TabsTrigger>
+                    <TabsTrigger value="draft">{t('posts.drafts')}</TabsTrigger>
                 </TabsList>
                 <TabsContent value={activeTab} className="mt-6">
                     <Card className="border-border/50">
@@ -41,12 +43,12 @@ export default function PostsPage() {
                             <div className="p-4 rounded-2xl bg-muted mb-4">
                                 <Send className="h-10 w-10 text-muted-foreground/50" />
                             </div>
-                            <h3 className="text-xl font-semibold mb-2">No posts yet</h3>
+                            <h3 className="text-xl font-semibold mb-2">{t('posts.no_posts')}</h3>
                             <p className="text-muted-foreground text-center max-w-md mb-6">
-                                Create your first post by selecting a template and customizing it with your details.
+                                {t('posts.no_posts_hint')}
                             </p>
                             <Button asChild>
-                                <a href="/templates">Browse Templates <ExternalLink className="ml-2 h-4 w-4" /></a>
+                                <a href="/templates">{t('posts.browse_templates')} <ExternalLink className="ml-2 h-4 w-4" /></a>
                             </Button>
                         </CardContent>
                     </Card>

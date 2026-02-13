@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
+import { useTranslation, LANGUAGES, Language } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -26,21 +27,23 @@ import {
     Upload,
     Globe,
     Shield,
+    Languages,
 } from 'lucide-react';
-
-const navLinks = [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/templates', label: 'Templates', icon: Palette },
-    { href: '/media', label: 'Media', icon: Upload },
-    { href: '/posts', label: 'Posts', icon: Send },
-    { href: '/social-accounts', label: 'Accounts', icon: Globe },
-    { href: '/subscription', label: 'Plans', icon: CreditCard },
-];
 
 export function Navbar() {
     const { user, profile, signOut } = useAuth();
+    const { t, language, setLanguage } = useTranslation();
     const pathname = usePathname();
     const [mobileOpen, setMobileOpen] = useState(false);
+
+    const navLinks = [
+        { href: '/dashboard', label: t('nav.dashboard'), icon: LayoutDashboard },
+        { href: '/templates', label: t('nav.templates'), icon: Palette },
+        { href: '/media', label: t('nav.media'), icon: Upload },
+        { href: '/posts', label: t('nav.posts'), icon: Send },
+        { href: '/social-accounts', label: t('nav.social_accounts'), icon: Globe },
+        { href: '/subscription', label: t('nav.subscription'), icon: CreditCard },
+    ];
 
     const initials = profile?.name
         ? profile.name
@@ -90,6 +93,17 @@ export function Navbar() {
 
                 {/* Right Side */}
                 <div className="flex items-center gap-3">
+                    {/* Language Toggle */}
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="hidden sm:flex items-center gap-1.5 text-xs"
+                        onClick={() => setLanguage(language === 'ta' ? 'en' : 'ta')}
+                    >
+                        <Languages className="h-3.5 w-3.5" />
+                        {LANGUAGES[language === 'ta' ? 'en' : 'ta']}
+                    </Button>
+
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost" className="relative h-9 w-9 rounded-full">
@@ -110,33 +124,41 @@ export function Navbar() {
                             <DropdownMenuItem asChild>
                                 <Link href="/profile" className="flex items-center gap-2">
                                     <User className="h-4 w-4" />
-                                    Profile
+                                    {t('nav.profile')}
                                 </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                                 <Link href="/media" className="flex items-center gap-2">
                                     <Image className="h-4 w-4" />
-                                    My Media
+                                    {t('nav.media')}
                                 </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem asChild>
                                 <Link href="/social-accounts" className="flex items-center gap-2">
                                     <Globe className="h-4 w-4" />
-                                    Social Accounts
+                                    {t('nav.social_accounts')}
                                 </Link>
+                            </DropdownMenuItem>
+                            {/* Language Toggle in dropdown for mobile */}
+                            <DropdownMenuItem
+                                onClick={() => setLanguage(language === 'ta' ? 'en' : 'ta')}
+                                className="flex items-center gap-2 sm:hidden"
+                            >
+                                <Languages className="h-4 w-4" />
+                                {language === 'ta' ? 'English' : 'தமிழ்'}
                             </DropdownMenuItem>
                             {(profile?.role === 'admin' || profile?.role === 'coordinator') && (
                                 <DropdownMenuItem asChild>
                                     <Link href="/admin" className="flex items-center gap-2">
                                         <Shield className="h-4 w-4" />
-                                        Admin Panel
+                                        {t('nav.admin_panel')}
                                     </Link>
                                 </DropdownMenuItem>
                             )}
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={signOut} className="text-destructive focus:text-destructive">
                                 <LogOut className="h-4 w-4 mr-2" />
-                                Sign Out
+                                {t('nav.sign_out')}
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
