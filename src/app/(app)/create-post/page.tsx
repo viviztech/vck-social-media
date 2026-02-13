@@ -16,7 +16,7 @@ import { loadImageFromFile } from '@/lib/template-renderer';
 import {
     ArrowLeft, Download, Send, Eye, Upload, Clock,
     Facebook, Instagram, Loader2, Palette, CheckCircle,
-    Calendar, Globe, X,
+    Calendar, Globe, X, ListTodo,
 } from 'lucide-react';
 
 export default function CreatePostPage() {
@@ -183,6 +183,29 @@ function CreatePostContent() {
         }
 
         setPublishing(false);
+    };
+
+    const handleAddToQueue = () => {
+        if (!template) return;
+        if (!scheduleMode || !scheduledDate || !scheduledTime) {
+            toast.error('Set a date and time to queue this post');
+            setScheduleMode(true);
+            return;
+        }
+
+        const queueItem = {
+            id: `q_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+            templateId: template.id,
+            templateName: template.name,
+            caption,
+            platforms: Object.entries(platforms).filter(([, v]) => v).map(([k]) => k),
+            scheduledAt: `${scheduledDate}T${scheduledTime}:00`,
+            status: 'queued' as const,
+        };
+
+        const existing = JSON.parse(localStorage.getItem('vck_post_queue') || '[]');
+        localStorage.setItem('vck_post_queue', JSON.stringify([...existing, queueItem]));
+        toast.success('Post added to queue! View it in Schedule.');
     };
 
     if (!template) {
@@ -419,32 +442,42 @@ function CreatePostContent() {
                             </CardContent>
                         </Card>
                     ) : (
-                        <Button
-                            className="w-full h-12 text-base"
-                            onClick={handlePublish}
-                            disabled={publishing}
-                        >
-                            {publishing ? (
-                                <>
-                                    <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                                    {scheduleMode ? 'Scheduling...' : 'Publishing...'}
-                                </>
-                            ) : (
-                                <>
-                                    {scheduleMode ? (
-                                        <>
-                                            <Calendar className="h-5 w-5 mr-2" />
-                                            Schedule Post
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Send className="h-5 w-5 mr-2" />
-                                            Publish Now
-                                        </>
-                                    )}
-                                </>
-                            )}
-                        </Button>
+                        <>
+                            <Button
+                                className="w-full h-12 text-base"
+                                onClick={handlePublish}
+                                disabled={publishing}
+                            >
+                                {publishing ? (
+                                    <>
+                                        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                                        {scheduleMode ? 'Scheduling...' : 'Publishing...'}
+                                    </>
+                                ) : (
+                                    <>
+                                        {scheduleMode ? (
+                                            <>
+                                                <Calendar className="h-5 w-5 mr-2" />
+                                                Schedule Post
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Send className="h-5 w-5 mr-2" />
+                                                Publish Now
+                                            </>
+                                        )}
+                                    </>
+                                )}
+                            </Button>
+                            <Button
+                                variant="outline"
+                                className="w-full"
+                                onClick={handleAddToQueue}
+                            >
+                                <ListTodo className="h-4 w-4 mr-2" />
+                                Add to Queue
+                            </Button>
+                        </>
                     )}
                 </div>
             </div>

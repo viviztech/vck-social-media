@@ -61,7 +61,7 @@ export interface Post {
     generated_image_url: string;
     custom_data: Record<string, string>;
     scheduled_at: string | null;
-    status: 'draft' | 'scheduled' | 'published' | 'failed';
+    status?: 'draft' | 'queued' | 'scheduled' | 'published' | 'failed';
     created_at: string;
 }
 

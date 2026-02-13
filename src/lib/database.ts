@@ -135,7 +135,7 @@ export interface PostRecord {
     caption?: string;
     image_url?: string;
     platforms?: string[];
-    status?: 'draft' | 'scheduled' | 'published' | 'failed';
+    status?: 'draft' | 'queued' | 'scheduled' | 'published' | 'failed';
     scheduled_at?: string;
     custom_data?: Record<string, string>;
 }
@@ -187,6 +187,64 @@ export async function deletePost(postId: string) {
         .eq('id', postId);
 
     return { error };
+}
+
+// ============================================
+// SCHEDULING
+// ============================================
+
+export async function getScheduledPosts(userId: string) {
+    const { data, error } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('user_id', userId)
+        .in('status', ['scheduled', 'queued'])
+        .order('scheduled_at', { ascending: true });
+
+    return { data, error };
+}
+
+export async function getPostsByDateRange(userId: string, startDate: string, endDate: string) {
+    const { data, error } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('user_id', userId)
+        .gte('scheduled_at', startDate)
+        .lte('scheduled_at', endDate)
+        .order('scheduled_at', { ascending: true });
+
+    return { data, error };
+}
+
+export async function batchCreatePosts(records: PostRecord[]) {
+    const { data, error } = await supabase
+        .from('posts')
+        .insert(records)
+        .select();
+
+    return { data, error };
+}
+
+export async function reschedulePost(postId: string, newScheduledAt: string) {
+    const { error } = await supabase
+        .from('posts')
+        .update({ scheduled_at: newScheduledAt })
+        .eq('id', postId);
+
+    return { error };
+}
+
+export async function getQueuedPostsDue() {
+    const now = new Date().toISOString();
+    const { data, error } = await supabase
+        .from('posts')
+        .select('*')
+        .eq('status', 'queued')
+        .lte('scheduled_at', now)
+        .order('scheduled_at', { ascending: true })
+        .limit(20);
+
+    return { data, error };
 }
 
 // ============================================

@@ -4,6 +4,12 @@
     "outputDirectory": ".next",
     "installCommand": "npm install",
     "devCommand": "npm run dev",
+    "crons": [
+        {
+            "path": "/api/cron/publish",
+            "schedule": "*/5 * * * *"
+        }
+    ],
     "env": {
         "NEXT_PUBLIC_SUPABASE_URL": "",
         "NEXT_PUBLIC_SUPABASE_ANON_KEY": "",

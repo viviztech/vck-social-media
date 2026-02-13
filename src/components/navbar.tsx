@@ -28,6 +28,7 @@ import {
     Globe,
     Shield,
     Languages,
+    CalendarDays,
 } from 'lucide-react';
 
 export function Navbar() {
@@ -41,6 +42,7 @@ export function Navbar() {
         { href: '/templates', label: t('nav.templates'), icon: Palette },
         { href: '/media', label: t('nav.media'), icon: Upload },
         { href: '/posts', label: t('nav.posts'), icon: Send },
+        { href: '/schedule', label: 'Schedule', icon: CalendarDays },
         { href: '/social-accounts', label: t('nav.social_accounts'), icon: Globe },
         { href: '/subscription', label: t('nav.subscription'), icon: CreditCard },
     ];
