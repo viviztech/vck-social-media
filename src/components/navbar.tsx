@@ -24,6 +24,7 @@ import {
     LogOut,
     Palette,
     Upload,
+    Globe,
 } from 'lucide-react';
 
 const navLinks = [
@@ -31,6 +32,7 @@ const navLinks = [
     { href: '/templates', label: 'Templates', icon: Palette },
     { href: '/media', label: 'Media', icon: Upload },
     { href: '/posts', label: 'Posts', icon: Send },
+    { href: '/social-accounts', label: 'Accounts', icon: Globe },
     { href: '/subscription', label: 'Plans', icon: CreditCard },
 ];
 
@@ -74,8 +76,8 @@ export function Navbar() {
                                 key={link.href}
                                 href={link.href}
                                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${isActive
-                                        ? 'bg-primary text-primary-foreground shadow-md'
-                                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'
+                                    ? 'bg-primary text-primary-foreground shadow-md'
+                                    : 'text-muted-foreground hover:text-foreground hover:bg-muted'
                                     }`}
                             >
                                 <link.icon className="h-4 w-4" />
@@ -116,6 +118,12 @@ export function Navbar() {
                                     My Media
                                 </Link>
                             </DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                                <Link href="/social-accounts" className="flex items-center gap-2">
+                                    <Globe className="h-4 w-4" />
+                                    Social Accounts
+                                </Link>
+                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem onClick={signOut} className="text-destructive focus:text-destructive">
                                 <LogOut className="h-4 w-4 mr-2" />
@@ -141,8 +149,8 @@ export function Navbar() {
                                             href={link.href}
                                             onClick={() => setMobileOpen(false)}
                                             className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${isActive
-                                                    ? 'bg-primary text-primary-foreground'
-                                                    : 'text-muted-foreground hover:bg-muted'
+                                                ? 'bg-primary text-primary-foreground'
+                                                : 'text-muted-foreground hover:bg-muted'
                                                 }`}
                                         >
                                             <link.icon className="h-5 w-5" />
