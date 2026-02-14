@@ -324,6 +324,69 @@ export async function deleteMedia(mediaId: string) {
 }
 
 // ============================================
+// NOTIFICATIONS
+// ============================================
+
+export interface DeviceTokenRecord {
+    user_id: string;
+    token: string;
+    platform: 'android' | 'ios' | 'web';
+}
+
+export interface NotificationPreferences {
+    user_id: string;
+    post_reminders: boolean;
+    new_templates: boolean;
+    subscription_alerts: boolean;
+}
+
+export async function saveDeviceToken(record: DeviceTokenRecord) {
+    const { data, error } = await supabase
+        .from('device_tokens')
+        .upsert(
+            { ...record, created_at: new Date().toISOString() },
+            { onConflict: 'user_id, token' }
+        )
+        .select()
+        .single();
+
+    return { data, error };
+}
+
+export async function getNotificationPreferences(userId: string) {
+    const { data, error } = await supabase
+        .from('notification_preferences')
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+    if (!data && !error) {
+        // Return defaults if no record exists
+        return {
+            data: {
+                user_id: userId,
+                post_reminders: true,
+                new_templates: true,
+                subscription_alerts: true,
+            },
+            error: null
+        };
+    }
+
+    return { data, error };
+}
+
+export async function updateNotificationPreferences(userId: string, preferences: Partial<NotificationPreferences>) {
+    const { data, error } = await supabase
+        .from('notification_preferences')
+        .upsert({ user_id: userId, ...preferences })
+        .select()
+        .single();
+
+    return { data, error };
+}
+
+// ============================================
 // DASHBOARD STATS
 // ============================================
 

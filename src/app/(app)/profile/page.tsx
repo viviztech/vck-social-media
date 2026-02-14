@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { useTranslation, LANGUAGES, Language } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -23,7 +23,13 @@ import {
     Mail,
     Shield,
     Languages,
+    Bell,
+    Info,
 } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { getNotificationPreferences, updateNotificationPreferences, NotificationPreferences } from '@/lib/database';
+import { initPushNotifications } from '@/lib/notifications';
+import { Capacitor } from '@capacitor/core';
 
 const DISTRICTS = [
     'Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 'Salem',
@@ -56,6 +62,49 @@ export default function ProfilePage() {
     const [constituency, setConstituency] = useState(profile?.constituency || '');
     const [district, setDistrict] = useState(profile?.district || '');
     const [partyRole, setPartyRole] = useState(profile?.party_role || '');
+
+    const [notificationPrefs, setNotificationPrefs] = useState<NotificationPreferences>({
+        user_id: user?.id || '',
+        post_reminders: true,
+        new_templates: true,
+        subscription_alerts: true,
+    });
+    const [isNative, setIsNative] = useState(false);
+
+    useEffect(() => {
+        setIsNative(Capacitor.isNativePlatform());
+        if (user?.id) {
+            loadNotificationPrefs();
+        }
+    }, [user?.id]);
+
+    const loadNotificationPrefs = async () => {
+        if (!user?.id) return;
+        const { data } = await getNotificationPreferences(user.id);
+        if (data) setNotificationPrefs(data);
+    };
+
+    const handleTogglePref = async (key: keyof NotificationPreferences, value: boolean) => {
+        if (!user?.id) return;
+
+        // Optimistic update
+        const newPrefs = { ...notificationPrefs, [key]: value };
+        setNotificationPrefs(newPrefs);
+
+        // If enabling any notification type, ensure permissions are requested
+        if (value && isNative) {
+            await initPushNotifications(user.id);
+        }
+
+        const { error } = await updateNotificationPreferences(user.id, { [key]: value });
+        if (error) {
+            // Revert on error
+            setNotificationPrefs(notificationPrefs);
+            toast.error('Failed to update preference');
+        } else {
+            toast.success('Preferences updated');
+        }
+    };
 
     const initials = name
         ? name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
@@ -181,6 +230,65 @@ export default function ProfilePage() {
                     </div>
                 </CardContent>
             </Card>
+
+            {/* Notification Preferences */}
+            <Card className="border-border/50">
+                <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                        <Bell className="h-5 w-5 text-primary" />
+                        Notification Preferences
+                    </CardTitle>
+                    <CardDescription>
+                        Manage your push notification settings
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between space-x-2">
+                        <Label htmlFor="post-reminders" className="flex flex-col space-y-1">
+                            <span>Post Reminders</span>
+                            <span className="font-normal text-xs text-muted-foreground">Receive alerts for scheduled posts</span>
+                        </Label>
+                        <Switch
+                            id="post-reminders"
+                            checked={notificationPrefs.post_reminders}
+                            onCheckedChange={(c) => handleTogglePref('post_reminders', c)}
+                        />
+                    </div>
+                    <Separator />
+                    <div className="flex items-center justify-between space-x-2">
+                        <Label htmlFor="new-templates" className="flex flex-col space-y-1">
+                            <span>New Templates</span>
+                            <span className="font-normal text-xs text-muted-foreground">Get notified when new designs are added</span>
+                        </Label>
+                        <Switch
+                            id="new-templates"
+                            checked={notificationPrefs.new_templates}
+                            onCheckedChange={(c) => handleTogglePref('new_templates', c)}
+                        />
+                    </div>
+                    <Separator />
+                    <div className="flex items-center justify-between space-x-2">
+                        <Label htmlFor="subscription-alerts" className="flex flex-col space-y-1">
+                            <span>Subscription Alerts</span>
+                            <span className="font-normal text-xs text-muted-foreground">Billing and payment notifications</span>
+                        </Label>
+                        <Switch
+                            id="subscription-alerts"
+                            checked={notificationPrefs.subscription_alerts}
+                            onCheckedChange={(c) => handleTogglePref('subscription_alerts', c)}
+                        />
+                    </div>
+
+                    {!isNative && (
+                        <div className="mt-4 p-3 bg-muted/50 rounded-lg text-xs text-muted-foreground flex items-center gap-2">
+                            <Info className="h-4 w-4" />
+                            Push notifications act differently on web vs mobile app.
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+
+            <Separator />
 
             {/* Personal Details */}
             <Card className="border-border/50">

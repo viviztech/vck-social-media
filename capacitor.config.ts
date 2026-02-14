@@ -11,6 +11,9 @@ const config: CapacitorConfig = {
         androidScheme: 'https',
     },
     plugins: {
+        PushNotifications: {
+            presentationOptions: ["badge", "sound", "alert"],
+        },
         StatusBar: {
             style: 'DARK',
             backgroundColor: '#1a237e',
