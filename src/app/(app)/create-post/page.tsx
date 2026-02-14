@@ -13,10 +13,11 @@ import { toast } from 'sonner';
 import { useAuth } from '@/lib/auth-context';
 import { getTemplateById, TemplateDefinition } from '@/lib/templates-data';
 import { loadImageFromFile } from '@/lib/template-renderer';
+import { shareToWhatsApp } from '@/lib/whatsapp';
 import {
     ArrowLeft, Download, Send, Eye, Upload, Clock,
     Facebook, Instagram, Loader2, Palette, CheckCircle,
-    Calendar, Globe, X, ListTodo,
+    Calendar, Globe, X, ListTodo, MessageCircle,
 } from 'lucide-react';
 
 export default function CreatePostPage() {
@@ -38,9 +39,10 @@ function CreatePostContent() {
     const [formData, setFormData] = useState<Record<string, string>>({});
     const [images, setImages] = useState<Record<string, HTMLImageElement>>({});
     const [caption, setCaption] = useState('');
-    const [platforms, setPlatforms] = useState<{ facebook: boolean; instagram: boolean }>({
+    const [platforms, setPlatforms] = useState<{ facebook: boolean; instagram: boolean; whatsapp: boolean }>({
         facebook: true,
         instagram: false,
+        whatsapp: false,
     });
     const [scheduleMode, setScheduleMode] = useState(false);
     const [scheduledDate, setScheduledDate] = useState('');
@@ -370,6 +372,20 @@ function CreatePostContent() {
                                 </div>
                                 {platforms.instagram && <CheckCircle className="h-4 w-4 text-green-500" />}
                             </label>
+                            <label className="flex items-center gap-3 p-3 rounded-lg border border-border/50 cursor-pointer hover:bg-muted/30 transition-colors">
+                                <input
+                                    type="checkbox"
+                                    checked={platforms.whatsapp || false}
+                                    onChange={(e) => setPlatforms((p) => ({ ...p, whatsapp: e.target.checked }))}
+                                    className="h-4 w-4 rounded accent-green-600"
+                                />
+                                <MessageCircle className="h-5 w-5 text-green-600" />
+                                <div className="flex-1">
+                                    <p className="text-sm font-medium">WhatsApp</p>
+                                    <p className="text-xs text-muted-foreground">Share to contacts & groups</p>
+                                </div>
+                                {platforms.whatsapp && <CheckCircle className="h-4 w-4 text-green-500" />}
+                            </label>
                         </CardContent>
                     </Card>
 
@@ -431,7 +447,16 @@ function CreatePostContent() {
                                 <CheckCircle className="h-10 w-10 text-green-500 mx-auto mb-3" />
                                 <h3 className="font-semibold text-green-600">Post Created!</h3>
                                 <p className="text-sm text-muted-foreground mt-1">Image downloaded. Connect Meta account for direct publishing.</p>
-                                <div className="flex gap-2 mt-4 justify-center">
+                                <div className="flex gap-2 mt-4 justify-center flex-wrap">
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="bg-green-600 text-white hover:bg-green-700 border-green-600"
+                                        onClick={() => shareToWhatsApp(caption, template?.name)}
+                                    >
+                                        <MessageCircle className="h-4 w-4 mr-1" />
+                                        Share to WhatsApp
+                                    </Button>
                                     <Button variant="outline" size="sm" onClick={() => router.push('/posts')}>
                                         View Posts
                                     </Button>

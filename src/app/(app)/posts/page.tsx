@@ -5,9 +5,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTranslation } from '@/lib/i18n';
+import { shareToWhatsApp } from '@/lib/whatsapp';
 import {
     Send, Clock, CheckCircle, XCircle, ExternalLink,
-    Image as ImageIcon, MoreVertical, FileText,
+    Image as ImageIcon, MoreVertical, FileText, MessageCircle,
 } from 'lucide-react';
 import { useState } from 'react';
 
